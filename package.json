@@ -20,7 +20,8 @@
       "typeorm": "0.3.7"
    },
    "scripts": {
-      "start": "ts-node src/index.ts",
+      "dev":"nodemon --exec ts-node src/server.ts",
+      "start": "ts-node src/server.ts",
       "typeorm": "typeorm-ts-node-commonjs"
    }
 }
