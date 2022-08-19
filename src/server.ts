@@ -1,19 +1,13 @@
-import { AppDataSource } from "./data-source"
-import { User } from "./entity/User"
+import { AppDataSource } from './data-source'
+import app from "./app"
+const appPort = process.env.PORT || 3000
 
-AppDataSource.initialize().then(async () => {
+AppDataSource.initialize().then(() => {
+    const server = app.listen(appPort, () => { console.log(`Server's running on port: ${appPort}`) })
 
-    console.log("Inserting a new user into the database...")
-    const user = new User()
-    user.name = "Timber"
-    user.email = "timer@email.com"
-    await AppDataSource.manager.save(user)
-    console.log("Saved a new user with id: " + user.id)
+    process.on('SIGINT', () => {
+        server.close()
+        console.log(`Server has stopped`)
+    })
 
-    console.log("Loading users from the database...")
-    const users = await AppDataSource.manager.find(User)
-    console.log("Loaded users: ", users)
-
-    console.log("Here you can setup and run express / fastify / any other framework.")
-
-}).catch(error => console.log(error))
+}).catch((error) => { console.log(error) })
