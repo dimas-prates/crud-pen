@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn } from "typeorm"
-import { runInThisContext } from "vm";
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm"
+import { Balance } from '../entity/Balance'
 
 @Entity('users')
 export class User {
@@ -7,7 +7,7 @@ export class User {
         this.name = name;
         this.email = email
     }
-    @PrimaryColumn()
+    @PrimaryColumn({ unique: true, type: 'text' })
     id: string;
 
     @Column({ type: 'text' })
@@ -15,4 +15,7 @@ export class User {
 
     @Column({ type: 'text' })
     email: string;
+
+    @OneToMany(() => Balance, balance => balance.user)
+    balances: Balance[]
 }
