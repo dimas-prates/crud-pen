@@ -2,6 +2,7 @@
    "name": "julius-backend",
    "version": "1.0.0",
    "main": "index.js",
+   "author": "Dimas Prates",
    "license": "MIT",
    "description": "API Julius app",
    "type": "commonjs",
@@ -26,6 +27,7 @@
    "scripts": {
       "dev": "nodemon --exec ts-node src/server.ts",
       "start": "node ./build/server.js",
+      "prod": "ts-node src/server.ts",
       "typeorm": "typeorm-ts-node-commonjs",
       "migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/migration/migration",
       "migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run",
