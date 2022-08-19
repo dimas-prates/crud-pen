@@ -21,6 +21,7 @@ export class UserController {
             return console.log(err)
         }
     }
+
     async list(req: Request, res: Response) {
         try {
             const allUsers = await userRepository.find({ relations: {} })
@@ -29,6 +30,7 @@ export class UserController {
             return console.log(err)
         }
     }
+
     async get(req: Request, res: Response) {
         const { id } = req.params
         if (!id) {
@@ -38,12 +40,13 @@ export class UserController {
             if (await userRepository.countBy({ id }) == 0) {
                 return res.status(404).json({ message: `User doesn't exist` })
             }
-            const user = await userRepository.findOneBy({ id })
+            const user = await userRepository.findOne({ where: { id }, relations: {} })
             return res.status(200).json(user)
         } catch (err) {
             return console.log(err)
         }
     }
+
     async update(req: Request, res: Response) {
         const { id } = req.params
         const { name, email } = req.body
@@ -83,7 +86,8 @@ export class UserController {
             return res.status(200).json({ message: `User updated with ID:${updatedUser.id}` })
         } catch (err) { console.log(err) }
     }
-    async remove(req: Request, res: Response) {
+
+    async delete(req: Request, res: Response) {
         const { id } = req.params
 
         if (!id) {
@@ -99,5 +103,24 @@ export class UserController {
             return res.status(200).json({ message: `User deleted with ID:${id}` })
         } catch (err) { console.log(err) }
 
+    }
+
+    async checkUser(id: string) {
+        try {
+            if (await userRepository.countBy({ id }) == 0) {
+                return false;
+            }
+            return await userRepository.findOne({ where: { id }, relations: { balances: true } })
+        } catch (err) { console.log(err) }
+    }
+    async getBalance(req: Request, res: Response) {
+        const { id } = req.params
+        try {
+            if (await userRepository.countBy({ id }) == 0) {
+                return res.send(400).json({ message: 'User not found' });
+            }
+            const user = await userRepository.findOne({ where: { id }, relations: { balances: true } })
+            return res.status(200).json(user?.balances)
+        } catch (err) { console.log(err) }
     }
 }
