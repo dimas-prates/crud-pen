@@ -1,6 +1,6 @@
 version: '3'
 services:
-  db:
+  dbpgsql:
     image: 'postgres:latest'
     environment:
       POSTGRES_PASSWORD: postgres
@@ -10,3 +10,11 @@ services:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  app:
+    container_name: julius-api
+    restart: always
+    build: .
+    ports:
+      -"3000:3000"
+    depends_on:
+      - dbpgsql
