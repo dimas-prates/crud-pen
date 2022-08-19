@@ -76,7 +76,6 @@ export class UserController {
             }
 
             if (JSON.stringify(outdatedUser) == JSON.stringify(updatedUser)) {
-
                 return res.status(400).json({ message: `Nothing to update` })
             }
 
