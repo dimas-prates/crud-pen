@@ -6,6 +6,9 @@ import { userRepository } from '../repository/userRepository'
 export class UserController {
     async create(req: Request, res: Response) {
         const { name, email } = req.body
+        if (!name || !email) {
+            return res.status(400).json({ message: 'Name and Email are required.' })
+        }
         try {
             let id = randomUUID()
             while (await userRepository.countBy({ id }) == 1) {
@@ -43,11 +46,15 @@ export class UserController {
     }
     async update(req: Request, res: Response) {
         const { id } = req.params
-        // const user:User = req.body
         const { name, email } = req.body
-        const user: User = { id, name, email }
+        const user = new User(name, email)
 
-        if (!userRepository.hasId(user)) {
+        if (!name && !email) {
+            return res.status(400).json({ message: 'Must inform name or email to update' })
+        }
+
+        // if (!userRepository.hasId(user)) {
+        if (!id) {
             return res.status(404).json({ message: 'ID is required' })
         }
 
@@ -63,14 +70,14 @@ export class UserController {
                 relations: {}
             })
 
-            if (JSON.stringify(outdatedUser) == JSON.stringify(user)) {
-
-                return res.status(400).json({ message: `Nothing to update` })
-            }
-
             const updatedUser = {
                 ...outdatedUser,
                 ...user
+            }
+
+            if (JSON.stringify(outdatedUser) == JSON.stringify(updatedUser)) {
+
+                return res.status(400).json({ message: `Nothing to update` })
             }
 
             await userRepository.save(updatedUser)
