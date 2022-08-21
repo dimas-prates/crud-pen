@@ -14,6 +14,9 @@ export class UserController {
             while (await userRepository.countBy({ id }) == 1) {
                 id = randomUUID()
             }
+            if (await userRepository.countBy({ email }) == 1) {
+                return res.status(400).json({ message: `Email ${email} already exists` })
+            }
             const newUser = userRepository.create({ id, name, email })
             await userRepository.save(newUser)
             return res.status(200).json({ message: `Created user: ${newUser.name}, ID: ${newUser.id}` })
@@ -67,6 +70,10 @@ export class UserController {
                 return res.status(404).json({ message: `User doesn't exist` })
             }
 
+            if (await userRepository.countBy({ email }) == 1) {
+                return res.status(400).json({ message: `Email ${email} already in use` })
+            }
+
             // const outdatedUser = await userRepository.findOneBy({id})
             const outdatedUser = await userRepository.findOne({
                 where: { id: id },
@@ -93,6 +100,7 @@ export class UserController {
         if (!id) {
             return res.status(404).json({ message: 'ID is required' })
         }
+
         try {
 
             if (await userRepository.countBy({ id }) == 0) {
